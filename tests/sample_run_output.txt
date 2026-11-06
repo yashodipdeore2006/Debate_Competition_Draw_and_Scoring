@@ -1,0 +1,94 @@
+Welcome to Debate Competition Draw and Scoring.
+
+============================================
+     DEBATE COMPETITION DRAW & SCORING
+============================================
+1. Create debate draw and enter scores
+2. View all debate matches
+3. Search match by ID
+4. View competition summary
+0. Exit
+--------------------------------------------
+Enter your choice: 
+========== CREATE DEBATE DRAW & ENTER SCORE ==========
+Enter unique match ID: Enter round name (e.g., Preliminary 1): Enter Team 1 name: Enter Team 2 name: Enter debate motion/topic: Enter Team 1 score (0-100): Enter Team 2 score (0-100): 
+Debate draw and score saved successfully in memory.
+Winner / result: Beta
+
+============================================
+     DEBATE COMPETITION DRAW & SCORING
+============================================
+1. Create debate draw and enter scores
+2. View all debate matches
+3. Search match by ID
+4. View competition summary
+0. Exit
+--------------------------------------------
+Enter your choice: 
+========== ALL DEBATE MATCHES ==========
+
+============================================
+Match ID       : M001
+Round          : Preliminary 1
+Team 1         : Alpha
+Team 2         : Beta
+Debate Motion  : This House supports renewable energy
+Score          : Alpha 65 - 72 Beta
+Result         : Beta
+============================================
+Total matches: 1
+
+============================================
+     DEBATE COMPETITION DRAW & SCORING
+============================================
+1. Create debate draw and enter scores
+2. View all debate matches
+3. Search match by ID
+4. View competition summary
+0. Exit
+--------------------------------------------
+Enter your choice: 
+========== SEARCH DEBATE MATCH ==========
+Enter match ID: 
+============================================
+Match ID       : M001
+Round          : Preliminary 1
+Team 1         : Alpha
+Team 2         : Beta
+Debate Motion  : This House supports renewable energy
+Score          : Alpha 65 - 72 Beta
+Result         : Beta
+============================================
+
+============================================
+     DEBATE COMPETITION DRAW & SCORING
+============================================
+1. Create debate draw and enter scores
+2. View all debate matches
+3. Search match by ID
+4. View competition summary
+0. Exit
+--------------------------------------------
+Enter your choice: 
+========== COMPETITION SUMMARY ==========
+Matches recorded       : 1
+Team 1-side wins       : 0
+Team 2-side wins       : 1
+Tied matches           : 0
+Total points awarded   : 137
+Object records created : 1
+
+Note: Team 1-side / Team 2-side wins are match-side counts,
+not unique team standings across the whole competition.
+
+============================================
+     DEBATE COMPETITION DRAW & SCORING
+============================================
+1. Create debate draw and enter scores
+2. View all debate matches
+3. Search match by ID
+4. View competition summary
+0. Exit
+--------------------------------------------
+Enter your choice: 
+Thank you. Goodbye!

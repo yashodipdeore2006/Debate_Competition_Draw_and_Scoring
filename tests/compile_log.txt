@@ -1,0 +1,2 @@
+Compile command: g++ -std=c++11 -Wall -Wextra -pedantic src/main.cpp -o debate_tracker
+Exit code: 0
