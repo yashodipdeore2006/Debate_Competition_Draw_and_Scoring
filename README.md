@@ -1,59 +1,34 @@
-# Debate Competition Draw and Scoring — CA1
+# Debate Competition Draw and Scoring
 
 **Course:** CAP455 — Object-Oriented Programming using C++  
-**Phase:** CA1 — Design & Create  
-**Storage:** In-memory fixed-size array; records are lost when the program exits.
+**Student:** Yashodip Prabhakar Deore  
+**Reg/Roll Number:** 12620514 / [42]  
+**Faculty:** Prof. Adarsh Singh  
+**Institution:** LPU, Computer Application | MCA | 2026–27
 
-## Purpose
-A console application for recording debate match pairings (draws), debate motions, team scores, and match results.
+## CA1
+Manual debate pairing entry, validation, duplicate ID and same-round team checks, view/search, winner/tie and competition summary. CA1 used an in-memory array.
 
-## CA1 features
-- Create a debate match by entering a unique match ID, round, two teams, motion, and scores.
-- Reject duplicate match IDs.
-- Reject a team debating itself.
-- Prevent a team from being assigned to more than one match in the same round.
-- Validate required text and scores (0–100).
-- View all matches and search by match ID.
-- Display the winner or tie and a basic competition summary.
+## CA2 — Persist and Search
+- Default, parameterised and copy constructors; destructor.
+- Fixed-size binary records in `data/debate_matches.dat`.
+- Data survives application restarts.
+- Search using `seekg()` and score update using `seekp()`.
+- View all saved matches and calculate summary from the binary file.
 
-## CA1 OOP concepts
-- `DebateMatch` entity class with private data members.
-- Static member `totalMatches` and static getter.
-- Inline getter functions.
-- Friend function `displayMatch`.
-- Array of objects: `DebateMatch matches[MAX_MATCHES]`.
-- Pointers to array objects during insertion and search.
-- `this` pointer in `setDetails`.
-- `std::string` for match, round, team, and motion information.
-
-## Build and run
-Requires a standard C++11-or-newer compiler.
-
+## Build
 ```bash
 g++ -std=c++11 -Wall -Wextra -pedantic src/main.cpp -o debate_tracker
 ./debate_tracker
 ```
+On Windows MinGW compile to `debate_tracker.exe` and run `.\debate_tracker.exe`. Run from repository root and ensure the `data/` directory exists.
 
-On Windows MinGW:
-```bash
-g++ -std=c++11 -Wall -Wextra -pedantic src/main.cpp -o debate_tracker.exe
-debate_tracker.exe
-```
+## CA2 documentation
+- `docs/CA2_Design.md`
+- `docs/CA2_Progress_Report.md`
+- `docs/UML_CA2.svg`
+- `docs/Flowchart_CA2.svg`
+- `tests/CA2_Test_Cases.md`
+- `tests/CA2_Test_Results.md`
 
-## Repository layout
-- `docs/CA1_Proposal.docx` — ten-page proposal draft
-- `docs/Data_Dictionary.md` — data fields and validation
-- `docs/UML_Class_Diagram.md` — class diagram
-- `docs/Flowchart.md` — application flow
-- `src/main.cpp` — source code
-- `tests/CA1_Test_Cases.md` — test plan
-- `docs/CA1_Submission_Checklist.md` — submission checklist
-
-## Phase boundary
-CA1 implements in-memory Create and Read. File persistence, binary records, update/delete, inheritance, operator overloading, dynamic memory, polymorphism, exception handling, templates, STL containers/algorithms, and advanced features are reserved for later CAs as described in the supplied course guide.
-
-## Important design note
-The draw is manually entered as a pairing in CA1; this version does not generate random pairings or calculate a full tournament bracket. Confirm whether your faculty expects automatic/random draw generation before expanding scope.
-
-## Academic integrity
-This is a learning draft. Compile, test, personalise, and understand every line before submission. Disclose AI assistance as required by the course guide and obtain faculty approval of the title and scope.
+CA2 does not implement deletion or later CA3/CA4 topics. Pairings remain manually entered; no random draw is generated.

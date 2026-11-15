@@ -1,269 +1,96 @@
 #include <iostream>
-#include <iomanip>
+#include <fstream>
 #include <string>
 #include <limits>
 #include <cctype>
-
+#include <cstring>
 using namespace std;
+const char DATA_FILE[]="data/debate_matches.dat";
+const int MAX_SCORE=100;
 
-const int MAX_MATCHES = 100;
-const int MAX_SCORE = 100;
-
-class DebateMatch {
-private:
-    string matchId;
-    string roundName;
-    string teamOne;
-    string teamTwo;
-    string debateMotion;
-    int teamOneScore;
-    int teamTwoScore;
-    static int totalMatches;
-
-public:
-    DebateMatch()
-        : matchId(""), roundName(""), teamOne(""), teamTwo(""),
-          debateMotion(""), teamOneScore(0), teamTwoScore(0) {}
-
-    // Initialise the current object using the this pointer.
-    void setDetails(const string& id, const string& round,
-                    const string& firstTeam, const string& secondTeam,
-                    const string& motion, int firstScore, int secondScore) {
-        this->matchId = id;
-        this->roundName = round;
-        this->teamOne = firstTeam;
-        this->teamTwo = secondTeam;
-        this->debateMotion = motion;
-        this->teamOneScore = firstScore;
-        this->teamTwoScore = secondScore;
-        ++totalMatches;
-    }
-
-    // Inline getters.
-    inline string getMatchId() const { return matchId; }
-    inline string getRoundName() const { return roundName; }
-    inline string getTeamOne() const { return teamOne; }
-    inline string getTeamTwo() const { return teamTwo; }
-    inline int getTeamOneScore() const { return teamOneScore; }
-    inline int getTeamTwoScore() const { return teamTwoScore; }
-
-    inline string getWinner() const {
-        if (teamOneScore > teamTwoScore) return teamOne;
-        if (teamTwoScore > teamOneScore) return teamTwo;
-        return "Tie";
-    }
-
-    static int getTotalMatches() { return totalMatches; }
-
-    // Friend function can access private data.
-    friend void displayMatch(const DebateMatch& match);
+struct DebateMatchRecord {
+    char matchId[24], roundName[48], teamOne[64], teamTwo[64], debateMotion[200];
+    int teamOneScore, teamTwoScore;
 };
 
-int DebateMatch::totalMatches = 0;
+class DebateMatch {
+    string matchId, roundName, teamOne, teamTwo, debateMotion;
+    int teamOneScore, teamTwoScore;
+    static int totalMatches, liveObjects;
+    static void copyText(char* out,size_t cap,const string& in) {
+        size_t n=in.size(); if(n>=cap)n=cap-1; memcpy(out,in.c_str(),n); out[n]='\0';
+    }
+public:
+    DebateMatch():matchId(""),roundName(""),teamOne(""),teamTwo(""),debateMotion(""),teamOneScore(0),teamTwoScore(0){++liveObjects;}
+    DebateMatch(const string& id,const string& round,const string& a,const string& b,const string& motion,int sa,int sb)
+      :matchId(id),roundName(round),teamOne(a),teamTwo(b),debateMotion(motion),teamOneScore(sa),teamTwoScore(sb){++totalMatches;++liveObjects;}
+    DebateMatch(const DebateMatch& x):matchId(x.matchId),roundName(x.roundName),teamOne(x.teamOne),teamTwo(x.teamTwo),debateMotion(x.debateMotion),teamOneScore(x.teamOneScore),teamTwoScore(x.teamTwoScore){++totalMatches;++liveObjects;}
+    ~DebateMatch(){--liveObjects;}
+    void setDetails(const string& id,const string& round,const string& a,const string& b,const string& motion,int sa,int sb){
+        this->matchId=id;this->roundName=round;this->teamOne=a;this->teamTwo=b;this->debateMotion=motion;this->teamOneScore=sa;this->teamTwoScore=sb;
+    }
+    inline string getMatchId()const{return matchId;}
+    inline string getRoundName()const{return roundName;}
+    inline string getTeamOne()const{return teamOne;}
+    inline string getTeamTwo()const{return teamTwo;}
+    inline int getTeamOneScore()const{return teamOneScore;}
+    inline int getTeamTwoScore()const{return teamTwoScore;}
+    string getWinner()const {if(teamOneScore>teamTwoScore)return teamOne;if(teamTwoScore>teamOneScore)return teamTwo;return "Tie";}
+    DebateMatchRecord toRecord()const {
+        DebateMatchRecord r={};copyText(r.matchId,sizeof(r.matchId),matchId);copyText(r.roundName,sizeof(r.roundName),roundName);
+        copyText(r.teamOne,sizeof(r.teamOne),teamOne);copyText(r.teamTwo,sizeof(r.teamTwo),teamTwo);copyText(r.debateMotion,sizeof(r.debateMotion),debateMotion);
+        r.teamOneScore=teamOneScore;r.teamTwoScore=teamTwoScore;return r;
+    }
+    static DebateMatch fromRecord(const DebateMatchRecord&r){return DebateMatch(r.matchId,r.roundName,r.teamOne,r.teamTwo,r.debateMotion,r.teamOneScore,r.teamTwoScore);}
+    static int getTotalMatches(){return totalMatches;}
+    static int getLiveObjects(){return liveObjects;}
+    friend void displayMatch(const DebateMatch&);
+};
+int DebateMatch::totalMatches=0; int DebateMatch::liveObjects=0;
 
-void displayMatch(const DebateMatch& match) {
-    cout << "\n============================================\n";
-    cout << "Match ID       : " << match.matchId << '\n';
-    cout << "Round          : " << match.roundName << '\n';
-    cout << "Team 1         : " << match.teamOne << '\n';
-    cout << "Team 2         : " << match.teamTwo << '\n';
-    cout << "Debate Motion  : " << match.debateMotion << '\n';
-    cout << "Score          : " << match.teamOne << " " << match.teamOneScore
-         << " - " << match.teamTwoScore << " " << match.teamTwo << '\n';
-    cout << "Result         : " << match.getWinner() << '\n';
-    cout << "============================================\n";
+void displayMatch(const DebateMatch&m){
+    cout<<"\nMatch ID: "<<m.matchId<<"\nRound: "<<m.roundName<<"\nTeam 1: "<<m.teamOne<<"\nTeam 2: "<<m.teamTwo
+        <<"\nMotion: "<<m.debateMotion<<"\nScore: "<<m.teamOneScore<<" - "<<m.teamTwoScore<<"\nResult: "<<m.getWinner()<<"\n";
 }
-
-string readNonEmptyLine(const string& prompt) {
-    string value;
-    while (true) {
-        cout << prompt;
-        getline(cin, value);
-        bool nonSpace = false;
-        for (char ch : value) {
-            if (!isspace(static_cast<unsigned char>(ch))) {
-                nonSpace = true;
-                break;
-            }
-        }
-        if (nonSpace) return value;
-        cout << "Input cannot be empty. Please try again.\n";
-    }
+string textInput(const string&p){string s;do{cout<<p;getline(cin,s);bool ok=false;for(char c:s)if(!isspace((unsigned char)c)){ok=true;break;}if(ok)return s;cout<<"Value cannot be blank.\n";}while(true);}
+int numberInput(const string&p,int lo,int hi){int n;while(true){cout<<p;if(cin>>n&&n>=lo&&n<=hi){cin.ignore(numeric_limits<streamsize>::max(),'\n');return n;}cout<<"Enter a whole number from "<<lo<<" to "<<hi<<".\n";cin.clear();cin.ignore(numeric_limits<streamsize>::max(),'\n');}}
+bool ensureFile(){ifstream in(DATA_FILE,ios::binary);if(in.good())return true;in.close();ofstream out(DATA_FILE,ios::binary);return out.good();}
+bool validLengths(const string&id,const string&r,const string&a,const string&b,const string&m){
+ return id.size()<sizeof(DebateMatchRecord::matchId)&&r.size()<sizeof(DebateMatchRecord::roundName)&&a.size()<sizeof(DebateMatchRecord::teamOne)&&b.size()<sizeof(DebateMatchRecord::teamTwo)&&m.size()<sizeof(DebateMatchRecord::debateMotion);
 }
-
-int readInteger(const string& prompt, int minimum, int maximum) {
-    int value;
-    while (true) {
-        cout << prompt;
-        if (cin >> value && value >= minimum && value <= maximum) {
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            return value;
-        }
-        cout << "Invalid input. Enter a whole number from "
-             << minimum << " to " << maximum << ".\n";
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    }
+bool readAt(fstream&f,streamoff pos,DebateMatchRecord&r){f.clear();f.seekg(pos,ios::beg);if(!f)return false;f.read(reinterpret_cast<char*>(&r),sizeof(r));return f.gcount()==sizeof(r);}
+streamoff locate(fstream&f,const string&id){
+ f.clear();f.seekg(0,ios::end);streamoff size=f.tellg();if(size<0||size%sizeof(DebateMatchRecord))return -1;
+ for(streamoff p=0;p<size;p+=sizeof(DebateMatchRecord)){DebateMatchRecord r={};if(!readAt(f,p,r))return -1;if(id==r.matchId)return p;}return -1;
 }
-
-int findMatchIndex(const DebateMatch matches[], int count, const string& id) {
-    for (int i = 0; i < count; ++i) {
-        if (matches[i].getMatchId() == id) return i;
-    }
-    return -1;
+bool teamUsed(fstream&f,const string&round,const string&team){
+ f.clear();f.seekg(0,ios::end);streamoff size=f.tellg();if(size<0||size%sizeof(DebateMatchRecord))return false;
+ for(streamoff p=0;p<size;p+=sizeof(DebateMatchRecord)){DebateMatchRecord r={};if(!readAt(f,p,r))return false;if(round==r.roundName&&(team==r.teamOne||team==r.teamTwo))return true;}return false;
 }
-
-bool teamAlreadyDrawnInRound(const DebateMatch matches[], int count,
-                             const string& round, const string& team) {
-    for (int i = 0; i < count; ++i) {
-        if (matches[i].getRoundName() == round &&
-            (matches[i].getTeamOne() == team || matches[i].getTeamTwo() == team)) {
-            return true;
-        }
-    }
-    return false;
+void addMatch(){
+ string id=textInput("Match ID: "),round=textInput("Round: "),a=textInput("Team 1: "),b=textInput("Team 2: "),motion=textInput("Debate motion: ");
+ if(!validLengths(id,round,a,b,motion)){cout<<"Text exceeds fixed binary field capacity. Record rejected.\n";return;}
+ if(a==b){cout<<"A team cannot debate against itself.\n";return;}
+ int sa=numberInput("Team 1 score (0-100): ",0,100),sb=numberInput("Team 2 score (0-100): ",0,100);
+ fstream f(DATA_FILE,ios::in|ios::out|ios::binary);if(!f){cout<<"Cannot open data file.\n";return;}
+ if(locate(f,id)!=-1){cout<<"Duplicate match ID rejected.\n";return;}
+ if(teamUsed(f,round,a)||teamUsed(f,round,b)){cout<<"Team already assigned in this round.\n";return;}
+ DebateMatch m(id,round,a,b,motion,sa,sb); DebateMatch copy(m); DebateMatchRecord rec=copy.toRecord();
+ f.clear();f.seekp(0,ios::end);f.write(reinterpret_cast<const char*>(&rec),sizeof(rec));f.flush();
+ if(f.good())cout<<"Match saved permanently. Winner/result: "<<m.getWinner()<<"\n";else cout<<"Write failed.\n";
 }
-
-void createDrawAndScore(DebateMatch matches[], int& count) {
-    if (count >= MAX_MATCHES) {
-        cout << "\nMatch storage is full. Cannot create another match.\n";
-        return;
-    }
-
-    cout << "\n========== CREATE DEBATE DRAW & ENTER SCORE ==========\n";
-    string id = readNonEmptyLine("Enter unique match ID: ");
-
-    if (findMatchIndex(matches, count, id) != -1) {
-        cout << "Duplicate match ID. Match was not created.\n";
-        return;
-    }
-
-    string round = readNonEmptyLine("Enter round name (e.g., Preliminary 1): ");
-    string firstTeam = readNonEmptyLine("Enter Team 1 name: ");
-    string secondTeam = readNonEmptyLine("Enter Team 2 name: ");
-
-    if (firstTeam == secondTeam) {
-        cout << "A team cannot debate against itself. Match was not created.\n";
-        return;
-    }
-
-    if (teamAlreadyDrawnInRound(matches, count, round, firstTeam) ||
-        teamAlreadyDrawnInRound(matches, count, round, secondTeam)) {
-        cout << "One of these teams is already assigned to a match in this round.\n";
-        cout << "Match was not created.\n";
-        return;
-    }
-
-    string motion = readNonEmptyLine("Enter debate motion/topic: ");
-    int firstScore = readInteger("Enter Team 1 score (0-100): ", 0, MAX_SCORE);
-    int secondScore = readInteger("Enter Team 2 score (0-100): ", 0, MAX_SCORE);
-
-    // Pointer to the next free object in the array.
-    DebateMatch* matchPointer = &matches[count];
-    matchPointer->setDetails(id, round, firstTeam, secondTeam,
-                             motion, firstScore, secondScore);
-    ++count;
-
-    cout << "\nDebate draw and score saved successfully in memory.\n";
-    cout << "Winner / result: " << matchPointer->getWinner() << '\n';
+void viewAll(){ifstream f(DATA_FILE,ios::binary);DebateMatchRecord r={};int n=0;while(f.read(reinterpret_cast<char*>(&r),sizeof(r))){DebateMatch m=DebateMatch::fromRecord(r);displayMatch(m);++n;}if(f.gcount()!=0)cout<<"Warning: incomplete trailing record.\n";if(!n)cout<<"No saved matches.\n";else cout<<"Total matches: "<<n<<"\n";}
+void searchMatch(){string id=textInput("Match ID to search: ");fstream f(DATA_FILE,ios::in|ios::binary);streamoff p=locate(f,id);if(p<0){cout<<"Match not found.\n";return;}DebateMatchRecord r={};if(readAt(f,p,r)){DebateMatch m=DebateMatch::fromRecord(r);displayMatch(m);}}
+void updateMatch(){string id=textInput("Match ID to update: ");fstream f(DATA_FILE,ios::in|ios::out|ios::binary);if(!f){cout<<"Cannot open data file.\n";return;}streamoff p=locate(f,id);if(p<0){cout<<"Match not found.\n";return;}DebateMatchRecord r={};if(!readAt(f,p,r)){cout<<"Read failed.\n";return;}
+ cout<<"Current: "<<r.teamOne<<" "<<r.teamOneScore<<" - "<<r.teamTwoScore<<" "<<r.teamTwo<<"\n";
+ int a=numberInput("New Team 1 score: ",0,100),b=numberInput("New Team 2 score: ",0,100),yes=numberInput("Confirm update (1=yes, 0=no): ",0,1);
+ if(!yes){cout<<"Update cancelled.\n";return;}r.teamOneScore=a;r.teamTwoScore=b;f.clear();f.seekp(p,ios::beg);f.write(reinterpret_cast<char*>(&r),sizeof(r));f.flush();cout<<(f.good()?"Scores updated using seekp().\n":"Update failed.\n");
 }
-
-void viewAllMatches(const DebateMatch matches[], int count) {
-    cout << "\n========== ALL DEBATE MATCHES ==========\n";
-    if (count == 0) {
-        cout << "No debate matches have been recorded yet.\n";
-        return;
-    }
-
-    for (int i = 0; i < count; ++i) {
-        displayMatch(matches[i]);
-    }
-    cout << "Total matches: " << count << '\n';
-}
-
-void searchMatch(const DebateMatch matches[], int count) {
-    cout << "\n========== SEARCH DEBATE MATCH ==========\n";
-    if (count == 0) {
-        cout << "No matches available to search.\n";
-        return;
-    }
-
-    string id = readNonEmptyLine("Enter match ID: ");
-    int index = findMatchIndex(matches, count, id);
-
-    if (index == -1) {
-        cout << "No match found with ID: " << id << '\n';
-    } else {
-        const DebateMatch* matchPointer = &matches[index];
-        displayMatch(*matchPointer);
-    }
-}
-
-void showCompetitionSummary(const DebateMatch matches[], int count) {
-    if (count == 0) {
-        cout << "\nNo matches available for summary.\n";
-        return;
-    }
-
-    int teamOneWins = 0;
-    int teamTwoWins = 0;
-    int ties = 0;
-    int totalPoints = 0;
-
-    for (int i = 0; i < count; ++i) {
-        if (matches[i].getTeamOneScore() > matches[i].getTeamTwoScore())
-            ++teamOneWins;
-        else if (matches[i].getTeamTwoScore() > matches[i].getTeamOneScore())
-            ++teamTwoWins;
-        else
-            ++ties;
-
-        totalPoints += matches[i].getTeamOneScore() + matches[i].getTeamTwoScore();
-    }
-
-    cout << "\n========== COMPETITION SUMMARY ==========\n";
-    cout << "Matches recorded       : " << count << '\n';
-    cout << "Team 1-side wins       : " << teamOneWins << '\n';
-    cout << "Team 2-side wins       : " << teamTwoWins << '\n';
-    cout << "Tied matches           : " << ties << '\n';
-    cout << "Total points awarded   : " << totalPoints << '\n';
-    cout << "Object records created : " << DebateMatch::getTotalMatches() << '\n';
-    cout << "\nNote: Team 1-side / Team 2-side wins are match-side counts,\n";
-    cout << "not unique team standings across the whole competition.\n";
-}
-
-void showMenu() {
-    cout << "\n============================================\n";
-    cout << "     DEBATE COMPETITION DRAW & SCORING\n";
-    cout << "============================================\n";
-    cout << "1. Create debate draw and enter scores\n";
-    cout << "2. View all debate matches\n";
-    cout << "3. Search match by ID\n";
-    cout << "4. View competition summary\n";
-    cout << "0. Exit\n";
-    cout << "--------------------------------------------\n";
-}
-
-int main() {
-    DebateMatch matches[MAX_MATCHES]; // Array of objects.
-    int matchCount = 0;
-    int choice;
-
-    cout << "Welcome to Debate Competition Draw and Scoring.\n";
-
-    do {
-        showMenu();
-        choice = readInteger("Enter your choice: ", 0, 4);
-
-        switch (choice) {
-            case 1: createDrawAndScore(matches, matchCount); break;
-            case 2: viewAllMatches(matches, matchCount); break;
-            case 3: searchMatch(matches, matchCount); break;
-            case 4: showCompetitionSummary(matches, matchCount); break;
-            case 0: cout << "\nThank you. Goodbye!\n"; break;
-            default: cout << "Invalid menu choice.\n";
-        }
-    } while (choice != 0);
-
-    return 0;
+void summary(){ifstream f(DATA_FILE,ios::binary);DebateMatchRecord r={};int n=0,a=0,b=0,t=0,points=0;while(f.read(reinterpret_cast<char*>(&r),sizeof(r))){++n;if(r.teamOneScore>r.teamTwoScore)++a;else if(r.teamTwoScore>r.teamOneScore)++b;else ++t;points+=r.teamOneScore+r.teamTwoScore;}cout<<"Matches: "<<n<<"\nTeam 1-side wins: "<<a<<"\nTeam 2-side wins: "<<b<<"\nTies: "<<t<<"\nTotal points: "<<points<<"\n";}
+int main(){
+ if(!ensureFile()){cerr<<"Cannot initialise "<<DATA_FILE<<". Ensure data directory exists.\n";return 1;}
+ int c;cout<<"Debate Competition Draw and Scoring — CA2\nBinary file: "<<DATA_FILE<<"\n";
+ do{cout<<"\n1 Add match\n2 View all\n3 Search by ID (seekg)\n4 Update scores (seekp)\n5 Summary\n0 Exit\n";c=numberInput("Choice: ",0,5);
+ switch(c){case 1:addMatch();break;case 2:viewAll();break;case 3:searchMatch();break;case 4:updateMatch();break;case 5:summary();break;case 0:cout<<"Records remain saved after exit.\n";break;}}while(c!=0);
+ return 0;
 }
