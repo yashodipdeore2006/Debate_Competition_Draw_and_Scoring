@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="660" viewBox="0 0 1080 660">
+<rect width="1080" height="660" fill="#ffffff"/>
+<text x="540" y="42" text-anchor="middle" font-family="Arial" font-size="26" font-weight="bold" fill="#1f4e79">CA3 Class Design — Debate Competition</text>
+<rect x="370" y="85" width="340" height="220" rx="10" fill="#eaf2f8" stroke="#1f4e79" stroke-width="2"/>
+<text x="540" y="118" text-anchor="middle" font-family="Arial" font-size="20" font-weight="bold" fill="#17365d">MatchBase (abstract)</text>
+<line x1="385" y1="132" x2="695" y2="132" stroke="#1f4e79"/>
+<text x="390" y="158" font-family="Arial" font-size="15" fill="#222"># matchId, roundName</text>
+<text x="390" y="181" font-family="Arial" font-size="15" fill="#222"># teamOne, teamTwo, debateMotion</text>
+<text x="390" y="204" font-family="Arial" font-size="15" fill="#222"># teamOneScore, teamTwoScore</text>
+<line x1="385" y1="218" x2="695" y2="218" stroke="#1f4e79"/>
+<text x="390" y="244" font-family="Arial" font-size="14" fill="#222">+ getWinner(), getCombinedScore()</text>
+<text x="390" y="267" font-family="Arial" font-size="14" fill="#222">+ virtual getMatchType(), clone()</text>
+<text x="390" y="290" font-family="Arial" font-size="14" fill="#222">+ virtual destructor</text>
+<rect x="115" y="400" width="330" height="170" rx="10" fill="#edf6ee" stroke="#548235" stroke-width="2"/>
+<text x="280" y="435" text-anchor="middle" font-family="Arial" font-size="20" font-weight="bold" fill="#385d22">DebateMatch</text>
+<text x="280" y="461" text-anchor="middle" font-family="Arial" font-size="15" fill="#222">Official debate record</text>
+<text x="135" y="500" font-family="Arial" font-size="14" fill="#222">+ default / parameter / copy ctors</text>
+<text x="135" y="525" font-family="Arial" font-size="14" fill="#222">+ record conversion constructor</text>
+<rect x="635" y="400" width="330" height="170" rx="10" fill="#fff2cc" stroke="#bf9000" stroke-width="2"/>
+<text x="800" y="435" text-anchor="middle" font-family="Arial" font-size="20" font-weight="bold" fill="#7f6000">PracticeMatch</text>
+<text x="800" y="461" text-anchor="middle" font-family="Arial" font-size="15" fill="#222">Practice debate record</text>
+<text x="655" y="500" font-family="Arial" font-size="14" fill="#222">+ getMatchType() override</text>
+<text x="655" y="525" font-family="Arial" font-size="14" fill="#222">+ clone() override</text>
+<path d="M280 400 L280 350 L480 350 L480 305" fill="none" stroke="#333" stroke-width="2"/>
+<path d="M800 400 L800 350 L600 350 L600 305" fill="none" stroke="#333" stroke-width="2"/>
+<path d="M470 318 L480 305 L490 318" fill="none" stroke="#333" stroke-width="2"/>
+<path d="M590 318 L600 305 L610 318" fill="none" stroke="#333" stroke-width="2"/>
+<text x="540" y="625" text-anchor="middle" font-family="Arial" font-size="15" fill="#555">Polymorphic registry: MatchBase* — official object array + dynamically allocated practice objects</text>
+</svg>
