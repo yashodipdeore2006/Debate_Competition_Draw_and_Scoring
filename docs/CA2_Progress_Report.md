@@ -51,8 +51,8 @@ The scripted checks are preliminary verification, not a substitute for running t
 |---|---|---|
 | CA1 | Design, Create/Read, validation, UML, flowchart | Baseline |
 | CA2 | Constructors/destructor, binary file, seekg, seekp, persistence | Implemented; student screenshots pending |
-| CA3 | Inheritance, operators, conversion, new/delete, virtual functions/destructor, safe delete/update | Planned |
-| CA4 | Full CRUD, custom exceptions, templates, STL containers/algorithms, advanced feature | Planned |
+| CA3 | Inheritance, operators, conversion, new/delete, virtual functions/destructor, safe delete/update | Implemented in CA3 branch; see CA3_Progress_Report.md |
+| CA4 | Full CRUD, custom exceptions, templates, STL containers/algorithms, advanced feature | Next phase |
 
 ## Scope note
 Pairings remain manually entered; random draw generation is not included. CA2 update is limited to scores and is not full CRUD. Faculty approval of scope and the student's demonstration remain required.
